@@ -14,12 +14,31 @@ class Hand:
     def __init__(self, cards):
         self.hand = cards
 
-    def get_matches(self):
+    def get_best_matches(self):
         """
         Determines best set of matches and calculates unmatched points
         :return: tuple: ( <unmatched points>, [Match, ...] )
         """
-        pass
+        cards = self.hand.copy()
+        sets = self.get_sets(cards)
+        for m in sets:
+            for c in m.cards:
+                cards.remove(c)
+        runs = self.get_runs(cards)
+        sets_first = sets+runs
+        set_points = self.calc_unmatched(sets_first)
+
+        cards = self.hand.copy()
+        runs = self.get_runs(cards)
+        for m in runs:
+            for c in m.cards:
+                cards.remove(c)
+        sets = self.get_sets(cards)
+        runs_first = runs+sets
+        run_points = self.calc_unmatched(runs_first)
+        return (set_points, sets_first) \
+            if set_points < run_points \
+            else (run_points, runs_first)
 
     def calc_unmatched(self, matches):
         """
@@ -33,9 +52,14 @@ class Hand:
                 unmatched_points -= c.points
         return unmatched_points
 
-    def get_sets(self):
+    def get_sets(self, cards):
+        """
+        Generate sets from the given cards
+        :param cards:
+        :return:
+        """
         sets = {}
-        for c in self.hand:
+        for c in cards:
             sets.setdefault(c.rank, []).append(c)
         matches = []
         for rank in sets:
@@ -43,9 +67,9 @@ class Hand:
                 matches.append(Match(Match.SET, sets[rank]))
         return matches
 
-    def get_runs(self):
+    def get_runs(self, cards):
         by_suit = {}
-        for c in self.hand:
+        for c in cards:
             by_suit.setdefault(c.suit, []).append(c)
             by_suit[c.suit].sort(key=lambda c: c.rank)
         runs = []
