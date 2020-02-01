@@ -46,3 +46,11 @@ class TestHand(TestCase):
         matches = Hand(cards).get_runs()
         self.assertEqual(1, len(matches))
         self.assertCountEqual(cards, matches[0].cards)
+
+    def test_get_run_broken(self):
+        cards = [Card(DIAMONDS, 4), Card(DIAMONDS, 7), Card(DIAMONDS, 9),
+                 Card(DIAMONDS, 8), Card(DIAMONDS, 11), Card(DIAMONDS, 13)]
+        matches = Hand(cards).get_runs()
+        self.assertEqual(1, len(matches))
+        self.assertCountEqual([Card(DIAMONDS, 7), Card(DIAMONDS, 8), Card(DIAMONDS, 9)],
+                              matches[0].cards)

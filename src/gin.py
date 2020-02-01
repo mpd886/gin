@@ -56,6 +56,9 @@ class Hand:
             self._get_sub(cards, predicate, all_runs, tmp_run, idx+1)
             tmp_run.pop()
         else:
+            if len(tmp_run) >= 3:
+                all_runs.append(tmp_run.copy())
+            tmp_run = [cards[idx]]
             self._get_sub(cards, predicate, all_runs, tmp_run, idx+1)
 
 
