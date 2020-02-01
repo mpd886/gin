@@ -15,7 +15,23 @@ class Hand:
         self.hand = cards
 
     def get_matches(self):
+        """
+        Determines best set of matches and calculates unmatched points
+        :return: tuple: ( <unmatched points>, [Match, ...] )
+        """
         pass
+
+    def calc_unmatched(self, matches):
+        """
+        Calculates unmatched points from unmatched cards
+        :param matches: matched sets and runs
+        :return: points
+        """
+        unmatched_points = sum([c.points for c in self.hand])
+        for m in matches:
+            for c in m.cards:
+                unmatched_points -= c.points
+        return unmatched_points
 
     def get_sets(self):
         sets = {}

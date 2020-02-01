@@ -76,3 +76,30 @@ class TestHand(TestCase):
         for m in matches:
             if m.cards != diamonds and m.cards != spades:
                 self.fail("Match isn't a proper run: {}".format(m.cards))
+
+    def test_unmatched_points_no_matches(self):
+        cards = [Card(CLUBS, 1), Card(DIAMONDS, 3), Card(HEARTS, 5), Card(SPADES, 3), Card(CLUBS, 1),
+                 Card(DIAMONDS, 11), Card(DIAMONDS, 13), Card(SPADES, 1), Card(HEARTS, 10), Card(HEARTS, 11)]
+        expected_points = 54
+        points = Hand(cards).calc_unmatched([])
+        self.assertEqual(expected_points, points)
+
+    def test_unmatched_points_all_cards_matched(self):
+        cards = [Card(CLUBS, 1), Card(CLUBS, 2), Card(CLUBS, 3), Card(CLUBS, 4), Card(CLUBS, 5),
+                 Card(CLUBS, 6), Card(CLUBS, 7), Card(CLUBS, 8), Card(CLUBS, 9), Card(CLUBS, 10)]
+        random.shuffle(cards)
+        hand = Hand(cards)
+        matches = hand.get_runs()
+        unmatched_points = hand.calc_unmatched(matches)
+        self.assertEqual(0, unmatched_points)
+
+    def test_unmatched_points_some_cards_matched(self):
+        cards = [Card(DIAMONDS, 1), Card(DIAMONDS, 2), Card(DIAMONDS, 3), Card(DIAMONDS, 6), Card(SPADES, 6),
+                 Card(CLUBS, 6), Card(HEARTS, 11), Card(HEARTS, 7), Card(CLUBS, 2), Card(CLUBS, 10)]
+        expected_points = 29
+        random.shuffle(cards)
+        hand = Hand(cards)
+        matched = hand.get_runs()
+        matched.extend(hand.get_sets())
+        points = hand.calc_unmatched(matched)
+        self.assertEqual(expected_points, points)
