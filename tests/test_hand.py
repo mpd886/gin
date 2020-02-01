@@ -54,3 +54,25 @@ class TestHand(TestCase):
         self.assertEqual(1, len(matches))
         self.assertCountEqual([Card(DIAMONDS, 7), Card(DIAMONDS, 8), Card(DIAMONDS, 9)],
                               matches[0].cards)
+
+    def test_multiple_runs(self):
+        cards = [Card(CLUBS, 1), Card(CLUBS, 5), Card(CLUBS, 2),
+                 Card(CLUBS, 6), Card(CLUBS, 3), Card(CLUBS, 7)]
+        matches = Hand(cards).get_runs()
+        self.assertEqual(2, len(matches))
+        for m in matches:
+            if (m.cards != [Card(CLUBS, 1), Card(CLUBS, 2), Card(CLUBS, 3)]) \
+                    and (m.cards != [Card(CLUBS, 5), Card(CLUBS, 6), Card(CLUBS, 7)]):
+                self.fail("Unexpected runs")
+
+    def test_diff_suits(self):
+        diamonds = [Card(DIAMONDS, 10), Card(DIAMONDS, 11), Card(DIAMONDS, 12)]
+        spades = [Card(SPADES, 4), Card(SPADES, 5), Card(SPADES, 6)]
+        clubs = [Card(CLUBS, 8), Card(CLUBS, 3), Card(CLUBS, 11), Card(CLUBS, 7)]
+        cards = diamonds + spades + clubs
+        random.shuffle(cards)
+        matches = Hand(cards).get_runs()
+        self.assertEqual(2, len(matches))
+        for m in matches:
+            if m.cards != diamonds and m.cards != spades:
+                self.fail("Match isn't a proper run: {}".format(m.cards))
